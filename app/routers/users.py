@@ -1,7 +1,7 @@
 #System imports
 
 #Libs imports
-from fastapi import APIRouter, status, Response
+from fastapi import APIRouter, status, Response, HTTPException
 
 #Local imports
 from internal.models import User
@@ -21,6 +21,8 @@ users = [
 
 @router.get("/users")
 async def get_all_users() -> list[User]:
+    if len(users) == 0:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     return users
 
 
@@ -36,15 +38,24 @@ async def get_user_by_id(user_id: int, name: str | None = None):
     return filtred_list
 
 @router.post("/users", status_code=status.HTTP_201_CREATED)
-async def create_user(user: User) -> User:
-    users.append(user)
-    return user
+async def create_user(new_user: User) -> User:
+    for user in users:
+        if user["id"] == new_user.id:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="A user with this id already exists")
+    users.append(new_user)
+    return new_user
 
 @router.delete("/users/{user_id}")
 async def delete_user(user_id: int) -> User:
-    deleted_user = list(filter(lambda x: x["id"] == user_id, users))
-    users.remove(deleted_user[0])
-    return deleted_user[0]
+    user_to_delete = list(filter(lambda x: x["id"] == user_id, users))
+    if len(user_to_delete) == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND) # No need for "details", a 404 is self explanatory
+    # The bellow two line should not happen id we manage our date correctly and the id is indeed unique
+    # but interesting for the example.
+    if len(user_to_delete) > 1:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="We find more than one user with this id, cannot delete")
+    users.remove(user_to_delete[0])
+    return Response(status_code = status.HTTP_200_OK)
 
 
 @router.put("/users/{user_id}")
