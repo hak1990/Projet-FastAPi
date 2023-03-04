@@ -5,25 +5,11 @@ from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
 
 #Local imports
+from internal.models import User, Car
 
 
 app = FastAPI()
 
-users = [
-    {"id": 1, "name": "test1", "password_hash": "b7e507f7b30caff568e11c613de215eba2f861b8545ef8c30298fdf9ddcd97e8", "password": "bambi"},
-    {"id": 2, "name": "test2", "password_hash": "467baa6c1a9337043bbf7837b4ab15022f8d5002c10947a844112ae988a5e910", "password": "johnDoe"},
-    {"id": 4, "name": "test4", "password_hash": "57d96f829f4d296f5553126cf31a6939c36ba45fc397fd80274d67239c5322a9", "password": "Casper"},
-    {"id": 3, "name": "test3", "password_hash": "742f552b7848035dc31cc11cda62d5eada07fc53ba17b9a18097a83bed055847", "password": "Beverlyhills"}
-]
-
-cars = [
-
-]
-
-
-class User(BaseModel): # we don't include password_hash in the definition of the class because we don't want to return it
-    id: int
-    name: str
 
 # bellow is a first way to instantiate a list of data. Here we instantiate them as dicts
 users = [
@@ -33,13 +19,7 @@ users = [
     {"id": 3, "name": "test3", "password_hash": "742f552b7848035dc31cc11cda62d5eada07fc53ba17b9a18097a83bed055847", "password": "Beverlyhills"}
 ]
 
-class Car(BaseModel):
-    make: str
-    model: str
-    year: int
-    color: str
-    mileage: float
-    price: float
+
 
 # bellow is a second way to instantiate a list of data. Here we instantiate them as instances of Car
 car_list = [
