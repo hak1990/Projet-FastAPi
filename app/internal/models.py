@@ -1,3 +1,9 @@
+#System imports
+
+#Libs imports
+from pydantic import BaseModel
+
+#Local imports
 
 class Car(BaseModel):
     make: str
